@@ -4,6 +4,10 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // GitHub Pages ("Deploy from a branch") sirve el sitio bajo
+  // https://jcbarbog.github.io/App-OCR/, no en la raíz del dominio. Este base
+  // path debe coincidir EXACTO (mayúsculas incluidas) con el nombre del repo.
+  base: '/App-OCR/',
   plugins: [
     react(),
     VitePWA({
@@ -16,7 +20,8 @@ export default defineConfig({
         display: 'standalone',
         theme_color: '#1B2D4F',
         background_color: '#EAEDF2',
-        start_url: '/',
+        start_url: '/App-OCR/',
+        scope: '/App-OCR/',
         orientation: 'portrait',
         icons: [
           { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
