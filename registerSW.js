@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/App-OCR/sw.js', { scope: '/App-OCR/' })})}
