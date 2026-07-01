@@ -20,13 +20,22 @@ const workerSrc = path.join(root, 'node_modules', 'tesseract.js', 'dist', 'worke
 const coreDir = path.join(root, 'node_modules', 'tesseract.js-core');
 
 // Variantes del núcleo WASM: con/sin SIMD, solo motor LSTM (el que usa esta
-// app). Se copian ambas para que el worker elija la correcta según el
-// soporte de SIMD del navegador del usuario.
+// app para reconocimiento). Se copian ambas para que el worker elija la
+// correcta según el soporte de SIMD del navegador del usuario.
+//
+// También se copian las variantes "combinadas" (Legacy + LSTM, sin sufijo
+// "-lstm"). Son necesarias exclusivamente para el worker de detección de
+// orientación (OSD): `worker.detect()` requiere el motor Legacy, que el
+// núcleo "-lstm" no incluye.
 const coreFiles = [
   'tesseract-core-simd-lstm.wasm.js',
   'tesseract-core-simd-lstm.wasm',
   'tesseract-core-lstm.wasm.js',
   'tesseract-core-lstm.wasm',
+  'tesseract-core-simd.wasm.js',
+  'tesseract-core-simd.wasm',
+  'tesseract-core.wasm.js',
+  'tesseract-core.wasm',
 ];
 
 function copyIfExists(src, destDir) {
@@ -71,3 +80,28 @@ async function downloadLang(lang) {
 }
 
 await Promise.all(LANGS.map(downloadLang));
+
+// Datos de OSD (Orientation and Script Detection). Es un paquete especial,
+// independiente del idioma, usado solo para detectar el ángulo del texto
+// (rápido, no es el OCR completo) antes de habilitar la extracción.
+async function downloadOsd() {
+  const dest = path.join(publicTessdataDir, 'osd.traineddata.gz');
+  if (existsSync(dest)) {
+    console.log('[copy-tesseract-assets] osd.traineddata.gz ya existe, se omite descarga.');
+    return;
+  }
+  const url = 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/osd/4.0.0/osd.traineddata.gz';
+  try {
+    console.log('[copy-tesseract-assets] Descargando osd.traineddata.gz...');
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const buf = Buffer.from(await res.arrayBuffer());
+    const { writeFileSync } = await import('node:fs');
+    writeFileSync(dest, buf);
+    console.log(`[copy-tesseract-assets] Listo: osd.traineddata.gz (${(buf.length / 1024 / 1024).toFixed(2)} MB)`);
+  } catch (err) {
+    console.warn(`[copy-tesseract-assets] No se pudo descargar osd.traineddata.gz (${err.message}). La detección de orientación quedará deshabilitada hasta que se descargue.`);
+  }
+}
+
+await downloadOsd();
