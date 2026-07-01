@@ -1,6 +1,15 @@
 import { useRef } from 'react';
 
-export default function ImageInput({ previewUrl, onImageSelected, onClear, disabled }) {
+export default function ImageInput({
+  previewUrl,
+  onImageSelected,
+  onClear,
+  onRotate,
+  onExtract,
+  canExtract,
+  isChecking,
+  isBusy,
+}) {
   const cameraInputRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -22,7 +31,18 @@ export default function ImageInput({ previewUrl, onImageSelected, onClear, disab
     <div className="image-input">
       <div className="image-input__display">
         {previewUrl ? (
-          <img src={previewUrl} alt="Portada del libro" />
+          <>
+            <img src={previewUrl} alt="Portada del libro" />
+            <button
+              type="button"
+              className="image-input__rotate"
+              aria-label="Rotar 90°"
+              onClick={onRotate}
+              disabled={isBusy}
+            >
+              <RotateGlyph />
+            </button>
+          </>
         ) : (
           <div className="image-input__placeholder">
             <CameraGlyph />
@@ -31,31 +51,54 @@ export default function ImageInput({ previewUrl, onImageSelected, onClear, disab
         )}
       </div>
 
+      <p className="image-input__hint">
+        Para mejor reconocimiento, captura la portada en formato vertical.
+        Si la imagen está apaisada, usa el botón de rotación.
+      </p>
+
+      {isChecking && (
+        <p className="image-input__orientation-status" role="status" aria-live="polite">
+          Revisando orientación…
+        </p>
+      )}
+
       <div className="image-input__actions">
-        <button
-          type="button"
-          className="btn btn--primary"
-          onClick={handleCameraClick}
-          disabled={disabled}
-        >
-          Tomar foto
-        </button>
-        <button
-          type="button"
-          className="btn btn--ghost"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={disabled}
-        >
-          Subir imagen
-        </button>
-        <button
-          type="button"
-          className="btn btn--ghost"
-          onClick={onClear}
-          disabled={disabled || !previewUrl}
-        >
-          Limpiar
-        </button>
+        <div className="image-input__actions-row">
+          <button
+            type="button"
+            className="btn btn--ghost"
+            onClick={handleCameraClick}
+            disabled={isBusy}
+          >
+            Tomar foto
+          </button>
+          <button
+            type="button"
+            className="btn btn--ghost"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isBusy}
+          >
+            Subir imagen
+          </button>
+        </div>
+        <div className="image-input__actions-row">
+          <button
+            type="button"
+            className="btn btn--primary"
+            onClick={onExtract}
+            disabled={!canExtract}
+          >
+            Extraer información
+          </button>
+          <button
+            type="button"
+            className="btn btn--ghost"
+            onClick={onClear}
+            disabled={isBusy || !previewUrl}
+          >
+            Limpiar
+          </button>
+        </div>
       </div>
 
       <input
@@ -87,6 +130,27 @@ function CameraGlyph() {
       />
       <circle cx="24" cy="25" r="7" fill="var(--color-bg)" />
       <circle cx="24" cy="25" r="4.2" fill="currentColor" opacity="0.45" />
+    </svg>
+  );
+}
+
+function RotateGlyph() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M20 11A8 8 0 1 0 17.5 17"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M20 5v6h-6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }

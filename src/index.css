@@ -7,9 +7,11 @@
   --color-text-muted: #667085;
   --color-text-faint: #98a2b3;
 
-  --color-accent: #1d3461;
-  --color-accent-hover: #16284c;
+  --color-accent: #1b2d4f;
+  --color-accent-hover: #142238;
   --color-accent-soft: #eef1f8;
+
+  --color-footer: #2f6fb0;
 
   --color-danger: #b42318;
   --color-success: #1b7a4d;
