@@ -49,9 +49,6 @@ export default function App() {
     const result = await detectOrientation(image);
     if (orientationCheckIdRef.current !== checkId) return; // hay una verificación más nueva en curso
     setOrientationStatus(result);
-    if (result === 'rotated') {
-      showToast('La imagen está apaisada. Rótala a vertical y vuelve a intentar.');
-    }
   };
 
   const handleImageSelected = (file) => {
@@ -172,7 +169,7 @@ export default function App() {
               onRotate={handleRotate}
               onExtract={handleExtract}
               canExtract={canExtract}
-              isChecking={isCheckingOrientation}
+              orientationStatus={orientationStatus}
               isBusy={isProcessing || isCheckingOrientation}
             />
             {isProcessing && <OcrProgress statusLabel={statusLabel} progress={progress} />}

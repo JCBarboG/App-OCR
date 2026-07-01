@@ -7,9 +7,11 @@ export default function ImageInput({
   onRotate,
   onExtract,
   canExtract,
-  isChecking,
+  orientationStatus,
   isBusy,
 }) {
+  const isChecking = orientationStatus === 'checking';
+  const isRotated = orientationStatus === 'rotated';
   const cameraInputRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -52,13 +54,19 @@ export default function ImageInput({
       </div>
 
       <p className="image-input__hint">
-        Para mejor reconocimiento, captura la portada en formato vertical.
-        Si la imagen está apaisada, usa el botón de rotación.
+        Para mejor reconocimiento, captura la portada en formato vertical. Si la
+        imagen está apaisada, usa el botón de rotación (esquina inferior derecha).
       </p>
 
       {isChecking && (
         <p className="image-input__orientation-status" role="status" aria-live="polite">
           Revisando orientación…
+        </p>
+      )}
+
+      {isRotated && (
+        <p className="image-input__orientation-warning" role="alert">
+          La imagen está apaisada. Rótala a vertical para poder extraer.
         </p>
       )}
 

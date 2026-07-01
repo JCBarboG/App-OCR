@@ -9,7 +9,7 @@ const STATUS_LABELS = {
   'initializing tesseract': 'Inicializando OCR…',
   'loading language traineddata': 'Cargando datos de idioma…',
   'initializing api': 'Preparando reconocimiento…',
-  'recognizing text': 'Reconociendo texto…',
+  'recognizing text': 'Extrayendo texto…',
 };
 
 export function useOcrWorker() {

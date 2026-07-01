@@ -208,6 +208,14 @@
   text-align: center;
 }
 
+.image-input__orientation-warning {
+  margin: 10px 0 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-danger);
+  text-align: center;
+}
+
 .image-input__actions {
   display: flex;
   flex-direction: column;
@@ -503,6 +511,9 @@
 
 .app-footer {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: var(--color-footer);
   color: #fff;
   text-align: center;
