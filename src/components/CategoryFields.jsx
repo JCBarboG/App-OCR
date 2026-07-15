@@ -8,7 +8,10 @@ export default function CategoryFields({ fields, onFieldChange, selection, onAss
       <div className="selection-bar">
         <p className="selection-bar__hint">
           {hasSelection ? (
-            <>Selección: <span className="selection-bar__text">“{truncate(selection.text.trim(), 80)}”</span></>
+            <>
+              Selección:{' '}
+              <span className="selection-bar__text">"{truncate(selection.text.trim(), 80)}"</span>
+            </>
           ) : (
             'Selecciona texto a la izquierda y toca una categoría para asignarlo'
           )}
@@ -31,13 +34,13 @@ export default function CategoryFields({ fields, onFieldChange, selection, onAss
       <div className="category-grid">
         {CATEGORIES.map((cat) => (
           <div className="category-grid__item" key={cat.key}>
-            <label htmlFor={`field-${cat.key}`}>{cat.label}</label>
+            <label htmlFor={`field-${cat.key}`}>{cat.fieldLabel}</label>
             <input
               id={`field-${cat.key}`}
               type="text"
               value={fields[cat.key]}
               onChange={(e) => onFieldChange(cat.key, e.target.value)}
-              placeholder={`${cat.label}…`}
+              placeholder={`${cat.fieldLabel}…`}
             />
           </div>
         ))}

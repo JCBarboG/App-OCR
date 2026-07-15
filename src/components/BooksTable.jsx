@@ -1,63 +1,55 @@
 import { CATEGORIES } from '../constants/categories';
+import { getMarcSuffix } from '../utils/marcSymbols';
 
-export default function BooksTable({
-  books,
-  currentFields,
-  onBookCellChange,
-  onCurrentFieldChange,
-  onSave,
-  onExport,
-}) {
+const COL_LETTERS = 'ABCDEFGHIJKLMNO'.split('');
+
+export default function BooksTable({ books, onSave, onExport }) {
   return (
     <div className="books-table-section">
-      <p className="books-table__counter">
-        {books.length} libro{books.length === 1 ? '' : 's'} en la tabla — listos para exportar cuando termines.
-      </p>
-
-      <div className="books-table__scroll">
-        <table className="books-table">
+      <div className="excel-wrap">
+        <table className="excel-table">
           <thead>
-            <tr>
-              <th className="books-table__index">#</th>
+            <tr className="col-letters">
+              <th />
+              {CATEGORIES.map((_, i) => (
+                <th key={i}>{COL_LETTERS[i]}</th>
+              ))}
+            </tr>
+            <tr className="field-names">
+              <th>1</th>
               {CATEGORIES.map((cat) => (
-                <th key={cat.key}>{cat.label}</th>
+                <th key={cat.key}>{cat.colLabel}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {books.map((book, index) => (
               <tr key={book.id}>
-                <td className="books-table__index">{index + 1}</td>
-                {CATEGORIES.map((cat) => (
-                  <td key={cat.key}>
-                    <input
-                      type="text"
-                      value={book[cat.key]}
-                      onChange={(e) => onBookCellChange(book.id, cat.key, e.target.value)}
-                    />
-                  </td>
-                ))}
+                <td>{index + 2}</td>
+                {CATEGORIES.map((cat) => {
+                  const val = book[cat.key] || '';
+                  const suffix = val ? getMarcSuffix(book, cat.key) : '';
+                  return (
+                    <td key={cat.key}>
+                      {val}
+                      {suffix && <span className="marc-sym">{suffix}</span>}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
-            <tr className="books-table__draft-row">
-              <td className="books-table__index">Nuevo</td>
+            <tr>
+              <td className="empty-cell">{books.length + 2}</td>
               {CATEGORIES.map((cat) => (
-                <td key={cat.key}>
-                  <input
-                    type="text"
-                    value={currentFields[cat.key]}
-                    onChange={(e) => onCurrentFieldChange(cat.key, e.target.value)}
-                    placeholder={cat.label}
-                  />
-                </td>
+                <td key={cat.key} />
               ))}
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div className="books-table__actions">
-        <button type="button" className="btn btn--ghost" onClick={onSave}>
+      <div className="btn-row">
+        <button type="button" className="btn btn--outline" onClick={onSave}>
           Guardar datos
         </button>
         <button type="button" className="btn btn--primary" onClick={onExport}>

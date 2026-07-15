@@ -1,112 +1,140 @@
 import { useRef } from 'react';
 
+const MAX_IMAGES = 3;
+
 export default function ImageInput({
-  previewUrl,
-  onImageSelected,
-  onClear,
+  images,
+  currentIndex,
+  onImageAdded,
+  onNavigate,
   onRotate,
+  onClear,
   onExtract,
-  canExtract,
-  orientationStatus,
   isBusy,
+  orientationWarning,
 }) {
-  const isChecking = orientationStatus === 'checking';
-  const isRotated = orientationStatus === 'rotated';
   const cameraInputRef = useRef(null);
   const fileInputRef = useRef(null);
 
+  const canAddMore = images.length < MAX_IMAGES;
+  const hasImages = images.length > 0;
+  const currentImage = images[currentIndex];
+
   const handleFile = (e) => {
     const file = e.target.files?.[0];
-    if (file) onImageSelected(file);
+    if (file) onImageAdded(file);
     e.target.value = '';
-  };
-
-  const handleCameraClick = () => {
-    if (previewUrl) {
-      const confirmed = window.confirm('¿Reemplazar la foto actual?');
-      if (!confirmed) return;
-    }
-    cameraInputRef.current?.click();
   };
 
   return (
     <div className="image-input">
-      <div className="image-input__display">
-        {previewUrl ? (
-          <>
-            <img src={previewUrl} alt="Portada del libro" />
-            <button
-              type="button"
-              className="image-input__rotate"
-              aria-label="Rotar 90°"
-              onClick={onRotate}
-              disabled={isBusy}
-            >
-              <RotateGlyph />
-            </button>
-          </>
-        ) : (
-          <div className="image-input__placeholder">
-            <CameraGlyph />
-            <p>Sin imagen aún</p>
+      <div className="gallery-container">
+        <div className="gallery-inner">
+          <button
+            type="button"
+            className="nav-btn"
+            aria-label="Imagen anterior"
+            onClick={() => onNavigate(currentIndex - 1)}
+            disabled={currentIndex === 0}
+          >
+            ←
+          </button>
+
+          <div className="gallery-image">
+            {currentImage ? (
+              <>
+                <img src={currentImage.previewUrl} alt={`Portada ${currentIndex + 1}`} />
+                <button
+                  type="button"
+                  className="rotate-btn"
+                  aria-label="Rotar 90°"
+                  onClick={onRotate}
+                  disabled={isBusy}
+                >
+                  <RotateGlyph />
+                </button>
+              </>
+            ) : (
+              <div className="gallery-placeholder">
+                <PlaceholderGlyph />
+              </div>
+            )}
           </div>
-        )}
+
+          <button
+            type="button"
+            className="nav-btn"
+            aria-label="Imagen siguiente"
+            onClick={() => onNavigate(currentIndex + 1)}
+            disabled={currentIndex >= images.length - 1}
+          >
+            →
+          </button>
+        </div>
+
+        <div className="gallery-dots">
+          {[0, 1, 2].map((i) => {
+            let cls = 'dot';
+            if (i === currentIndex && i < images.length) cls += ' dot--active';
+            else if (i < images.length) cls += ' dot--used';
+            return (
+              <div
+                key={i}
+                className={cls}
+                onClick={() => i < images.length && onNavigate(i)}
+              />
+            );
+          })}
+        </div>
       </div>
 
-      <p className="image-input__hint">
-        Para mejor reconocimiento, captura la portada en formato vertical. Si la
-        imagen está apaisada, usa el botón de rotación (esquina inferior derecha).
+      {orientationWarning && (
+        <p className="orientation-warning" role="alert">
+          {orientationWarning}
+        </p>
+      )}
+
+      <p className="image-hint">
+        Captura máximo 3 portadas. Usa las flechas para navegar. La orientación vertical
+        es requerida para extraer.
       </p>
 
-      {isChecking && (
-        <p className="image-input__orientation-status" role="status" aria-live="polite">
-          Revisando orientación…
-        </p>
-      )}
+      <div className="btn-row">
+        <button
+          type="button"
+          className="btn btn--outline"
+          onClick={() => cameraInputRef.current?.click()}
+          disabled={!canAddMore || isBusy}
+        >
+          Tomar foto
+        </button>
+        <button
+          type="button"
+          className="btn btn--outline"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={!canAddMore || isBusy}
+        >
+          Subir imagen
+        </button>
+      </div>
 
-      {isRotated && (
-        <p className="image-input__orientation-warning" role="alert">
-          La imagen está apaisada. Rótala a vertical para poder extraer.
-        </p>
-      )}
-
-      <div className="image-input__actions">
-        <div className="image-input__actions-row">
-          <button
-            type="button"
-            className="btn btn--ghost"
-            onClick={handleCameraClick}
-            disabled={isBusy}
-          >
-            Tomar foto
-          </button>
-          <button
-            type="button"
-            className="btn btn--ghost"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isBusy}
-          >
-            Subir imagen
-          </button>
-        </div>
-        <div className="image-input__actions-row">
-          <button
-            type="button"
-            className="btn btn--primary"
-            onClick={onExtract}
-            disabled={!canExtract}
-          >
-            Extraer información
-          </button>
-          <button
-            type="button"
-            className="btn btn--ghost"
-            onClick={onClear}
-            disabled={isBusy || !previewUrl}
-          >
-            Limpiar
-          </button>
-        </div>
+      <div className="btn-row">
+        <button
+          type="button"
+          className="btn btn--primary"
+          onClick={onExtract}
+          disabled={!hasImages || isBusy}
+        >
+          Extraer información
+        </button>
+        <button
+          type="button"
+          className="btn btn--ghost"
+          onClick={onClear}
+          disabled={!hasImages || isBusy}
+        >
+          Limpiar
+        </button>
       </div>
 
       <input
@@ -128,16 +156,20 @@ export default function ImageInput({
   );
 }
 
-function CameraGlyph() {
+function PlaceholderGlyph() {
   return (
-    <svg width="40" height="40" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-      <path
-        d="M14 14.5 15.6 11h16.8l1.6 3.5H38a3 3 0 0 1 3 3V35a3 3 0 0 1-3 3H10a3 3 0 0 1-3-3V17.5a3 3 0 0 1 3-3h4Z"
-        fill="currentColor"
-        opacity="0.85"
-      />
-      <circle cx="24" cy="25" r="7" fill="var(--color-bg)" />
-      <circle cx="24" cy="25" r="4.2" fill="currentColor" opacity="0.45" />
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="19" cy="17" r="4" />
+      <path d="M6 38l10-12 7 8 5-6 14 10" />
+      <rect x="3" y="6" width="42" height="36" rx="3" />
     </svg>
   );
 }
