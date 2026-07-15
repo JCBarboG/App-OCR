@@ -7,7 +7,7 @@ export default defineConfig({
   // GitHub Pages ("Deploy from a branch") sirve el sitio bajo
   // https://jcbarbog.github.io/App-OCR/, no en la raíz del dominio. Este base
   // path debe coincidir EXACTO (mayúsculas incluidas) con el nombre del repo.
-  base: '/App-OCR/',
+  base: '/EBO/',
   plugins: [
     react(),
     VitePWA({
@@ -20,8 +20,8 @@ export default defineConfig({
         display: 'standalone',
         theme_color: '#0d2842',
         background_color: '#0d2842',
-        start_url: '/App-OCR/',
-        scope: '/App-OCR/',
+        start_url: '/EBO/',
+        scope: '/EBO/',
         orientation: 'portrait',
         icons: [
           { src: 'icons/ebo-48.png', sizes: '48x48', type: 'image/png' },
