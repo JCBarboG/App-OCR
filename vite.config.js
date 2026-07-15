@@ -24,10 +24,11 @@ export default defineConfig({
         scope: '/EBO/',
         orientation: 'portrait',
         icons: [
-          { src: 'icons/ebo-48.png', sizes: '48x48', type: 'image/png' },
-          { src: 'icons/ebo-96.png', sizes: '96x96', type: 'image/png' },
+          { src: 'icons/ebo-48.png',  sizes: '48x48',   type: 'image/png' },
+          { src: 'icons/ebo-96.png',  sizes: '96x96',   type: 'image/png' },
           { src: 'icons/ebo-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-          { src: 'icons/ebo-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+          { src: 'icons/ebo-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: 'icons/ebo-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
       workbox: {
