@@ -1,9 +1,15 @@
-import { CATEGORIES } from '../constants/categories';
+import { useApp } from '../context/AppContext';
+import { useT } from '../i18n/translations';
+import { CATEGORIES_BY_TYPE } from '../constants/docTypes';
 import { getMarcSuffix } from '../utils/marcSymbols';
 
-const COL_LETTERS = 'ABCDEFGHIJKLMNO'.split('');
+const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 export default function BooksTable({ books, onSave, onExport }) {
+  const { lang, docType } = useApp();
+  const t = useT(lang);
+  const cats = CATEGORIES_BY_TYPE[docType] || CATEGORIES_BY_TYPE.libro;
+
   return (
     <div className="books-table-section">
       <div className="excel-wrap">
@@ -11,14 +17,12 @@ export default function BooksTable({ books, onSave, onExport }) {
           <thead>
             <tr className="col-letters">
               <th />
-              {CATEGORIES.map((_, i) => (
-                <th key={i}>{COL_LETTERS[i]}</th>
-              ))}
+              {cats.map((_, i) => <th key={i}>{LETTERS[i]}</th>)}
             </tr>
             <tr className="field-names">
               <th>1</th>
-              {CATEGORIES.map((cat) => (
-                <th key={cat.key}>{cat.colLabel}</th>
+              {cats.map((cat) => (
+                <th key={cat.key}>{cat.colLabel[lang] || cat.colLabel.es}</th>
               ))}
             </tr>
           </thead>
@@ -26,9 +30,9 @@ export default function BooksTable({ books, onSave, onExport }) {
             {books.map((book, index) => (
               <tr key={book.id}>
                 <td>{index + 2}</td>
-                {CATEGORIES.map((cat) => {
+                {cats.map((cat) => {
                   const val = book[cat.key] || '';
-                  const suffix = val ? getMarcSuffix(book, cat.key) : '';
+                  const suffix = val ? getMarcSuffix(book, cat.key, docType) : '';
                   return (
                     <td key={cat.key}>
                       {val}
@@ -40,9 +44,7 @@ export default function BooksTable({ books, onSave, onExport }) {
             ))}
             <tr>
               <td className="empty-cell">{books.length + 2}</td>
-              {CATEGORIES.map((cat) => (
-                <td key={cat.key} />
-              ))}
+              {cats.map((cat) => <td key={cat.key} />)}
             </tr>
           </tbody>
         </table>
@@ -50,10 +52,10 @@ export default function BooksTable({ books, onSave, onExport }) {
 
       <div className="btn-row">
         <button type="button" className="btn btn--outline" onClick={onSave}>
-          Guardar datos
+          {t.step03.save}
         </button>
         <button type="button" className="btn btn--primary" onClick={onExport}>
-          Exportar a Excel
+          {t.step03.export}
         </button>
       </div>
     </div>

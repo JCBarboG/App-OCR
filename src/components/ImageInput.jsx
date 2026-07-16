@@ -1,4 +1,6 @@
 import { useRef } from 'react';
+import { useApp } from '../context/AppContext';
+import { useT } from '../i18n/translations';
 
 const MAX_IMAGES = 3;
 
@@ -13,6 +15,8 @@ export default function ImageInput({
   isBusy,
   orientationWarning,
 }) {
+  const { lang, cameraEnabled } = useApp();
+  const t = useT(lang);
   const cameraInputRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -43,7 +47,7 @@ export default function ImageInput({
           <div className="gallery-image">
             {currentImage ? (
               <>
-                <img src={currentImage.previewUrl} alt={`Portada ${currentIndex + 1}`} />
+                <img src={currentImage.previewUrl} alt={`Imagen ${currentIndex + 1}`} />
                 <button
                   type="button"
                   className="rotate-btn"
@@ -94,27 +98,26 @@ export default function ImageInput({
         </p>
       )}
 
-      <p className="image-hint">
-        Captura máximo 3 portadas. Usa las flechas para navegar. La orientación vertical
-        es requerida para extraer.
-      </p>
+      <p className="image-hint">{t.step01.hint}</p>
 
       <div className="btn-row">
-        <button
-          type="button"
-          className="btn btn--outline"
-          onClick={() => cameraInputRef.current?.click()}
-          disabled={!canAddMore || isBusy}
-        >
-          Tomar foto
-        </button>
+        {cameraEnabled && (
+          <button
+            type="button"
+            className="btn btn--outline"
+            onClick={() => cameraInputRef.current?.click()}
+            disabled={!canAddMore || isBusy}
+          >
+            {t.step01.takePhoto}
+          </button>
+        )}
         <button
           type="button"
           className="btn btn--outline"
           onClick={() => fileInputRef.current?.click()}
           disabled={!canAddMore || isBusy}
         >
-          Subir imagen
+          {t.step01.upload}
         </button>
       </div>
 
@@ -125,7 +128,7 @@ export default function ImageInput({
           onClick={onExtract}
           disabled={!hasImages || isBusy}
         >
-          Extraer información
+          {t.step01.extract}
         </button>
         <button
           type="button"
@@ -133,7 +136,7 @@ export default function ImageInput({
           onClick={onClear}
           disabled={!hasImages || isBusy}
         >
-          Limpiar
+          {t.step01.clear}
         </button>
       </div>
 

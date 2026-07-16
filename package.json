@@ -1,16 +1,19 @@
 {
-  "name": "ocr-bibliografico",
+  "name": "ebo",
   "private": true,
-  "version": "0.1.0",
+  "version": "3.0.0",
   "type": "module",
+  "homepage": "https://jcbarbog.github.io/EBO/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "postinstall": "node scripts/copy-tesseract-assets.mjs",
-    "deploy": "npm run build && gh-pages -d dist"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tesseract.js": "^5.1.1",

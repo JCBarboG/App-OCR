@@ -1,34 +1,28 @@
-import { CATEGORIES } from '../constants/categories';
+import { CATEGORIES_BY_TYPE } from '../constants/docTypes';
 
-const KEYS = CATEGORIES.map((c) => c.key);
-
-// Returns the ISBD/MARC 21 punctuation suffix for a field value in context.
-// Rules:
-//   TÍTULO   → " :" if SUBTÍTULO has content; " /" if AUTOR has content; else " ;"
-//   SUBTÍTULO → " /" if AUTOR has content; else " ;"
-//   All others → " ;" if any later field has content
-//   Last field with content → no suffix
-//   Empty field → no suffix
-export function getMarcSuffix(fields, currentKey) {
+export function getMarcSuffix(fields, currentKey, docType = 'libro') {
   const value = fields[currentKey];
   if (!value || !value.trim()) return '';
 
-  const currentIdx = KEYS.indexOf(currentKey);
-  const hasContentAfter = KEYS.slice(currentIdx + 1).some(
-    (k) => fields[k] && fields[k].trim(),
-  );
+  const cats = CATEGORIES_BY_TYPE[docType] || CATEGORIES_BY_TYPE.libro;
+  const keys = cats.map((c) => c.key);
 
+  const currentIdx = keys.indexOf(currentKey);
+  if (currentIdx === -1) return '';
+
+  const hasContentAfter = keys.slice(currentIdx + 1).some((k) => fields[k] && fields[k].trim());
   if (!hasContentAfter) return '';
 
-  if (currentKey === 'titulo') {
-    if (fields['subtitulo'] && fields['subtitulo'].trim()) return ' :';
-    if (fields['autor'] && fields['autor'].trim()) return ' /';
-    return ' ;';
-  }
-
-  if (currentKey === 'subtitulo') {
-    if (fields['autor'] && fields['autor'].trim()) return ' /';
-    return ' ;';
+  if (docType === 'libro') {
+    if (currentKey === 'titulo') {
+      if (fields['subtitulo'] && fields['subtitulo'].trim()) return ' :';
+      if (fields['autor'] && fields['autor'].trim()) return ' /';
+      return ' ;';
+    }
+    if (currentKey === 'subtitulo') {
+      if (fields['autor'] && fields['autor'].trim()) return ' /';
+      return ' ;';
+    }
   }
 
   return ' ;';

@@ -1,4 +1,10 @@
+import { useApp } from '../context/AppContext';
+import { useT } from '../i18n/translations';
+
 export default function TextEditor({ value, onChange, onSelectionChange }) {
+  const { lang } = useApp();
+  const t = useT(lang);
+
   const handleSelect = (e) => {
     const { selectionStart, selectionEnd, value: text } = e.target;
     onSelectionChange({
@@ -11,7 +17,7 @@ export default function TextEditor({ value, onChange, onSelectionChange }) {
   return (
     <div className="text-editor">
       <label className="text-editor__label" htmlFor="raw-text">
-        Texto reconocido (corrígelo y luego selecciona fragmentos para asignarlos a una categoría)
+        {t.step02.recognized}
       </label>
       <textarea
         id="raw-text"
@@ -21,7 +27,7 @@ export default function TextEditor({ value, onChange, onSelectionChange }) {
         onSelect={handleSelect}
         onMouseUp={handleSelect}
         onKeyUp={handleSelect}
-        placeholder="El texto extraído de la imagen aparecerá aquí…"
+        placeholder={t.step02.placeholder}
         rows={10}
         spellCheck={false}
       />
