@@ -4,9 +4,9 @@ import { useApp } from '../context/AppContext';
 import { useT } from '../i18n/translations';
 
 // Configure your EmailJS credentials here
-const EMAILJS_SERVICE_ID = 'service_ebo';
-const EMAILJS_TEMPLATE_ID = 'template_ebo_support';
-const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
+const EMAILJS_SERVICE_ID = 'service_dhokhvc';
+const EMAILJS_TEMPLATE_ID = 'ejIEJTkMEVI-8zDnr';
+const EMAILJS_PUBLIC_KEY = 'ejIEJTkMEVI-8zDnr';
 
 const MAX_ATTACH = 4;
 
