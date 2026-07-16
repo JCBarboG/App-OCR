@@ -5,7 +5,7 @@ import { useT } from '../i18n/translations';
 
 // Configure your EmailJS credentials here
 const EMAILJS_SERVICE_ID = 'service_dhokhvc';
-const EMAILJS_TEMPLATE_ID = 'ejIEJTkMEVI-8zDnr';
+const EMAILJS_TEMPLATE_ID = 'template_od1rur4';
 const EMAILJS_PUBLIC_KEY = 'ejIEJTkMEVI-8zDnr';
 
 const MAX_ATTACH = 4;
